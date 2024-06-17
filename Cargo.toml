@@ -3,4 +3,25 @@ name = "wfc_web"
 version = "0.1.0"
 edition = "2021"
 
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+path = "src/main.rs"
+name = "wfc_web"
+
+[target.x86_64-pc-windows-msvc]
+rustflags = ["-C", "link-arg=-fuse-ld=lld"]
+
+[target.x86_64-pc-windows-gnu]
+rustflags = ["-C", "link-arg=-fuse-ld=lld"]
+
+[target.x86_64-unknow-linux-gnu]
+rustflags = ["-C", "linker=clang", "-C", "link-arg=-fuse-ld=lld"]
+
 [dependencies]
+actix-web = "4"
+actix-files = "0.6.5"
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+
+
