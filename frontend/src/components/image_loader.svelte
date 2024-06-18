@@ -1,20 +1,29 @@
 <script>
   import UploadDefault from "../assets/upload.png";
-  let image = UploadDefault;
   let image_title = "No image selected";
+  let image_url = "";
   let selected = false;
   let image_input;
-</script>
+
+  let handleUpload = (e) => {
+    let file = e.target.files[0];
+    image_url = URL.createObjectURL(file);
+    image_title = file.name;
+    selected = true
+  }
+
+
+  </script>
 
 <div class="wrapper">
   <button class="img-wrapper" on:click={image_input.click()}>
-    <img class="img-container" src={image} alt="selected tile set" />
+    <img class="img-container" src={selected ? image_url : UploadDefault} alt="selected tile set" />
   </button>
   <div class={selected ? "img-title" : "unselected img-title"}>
     {image_title}
   </div>
 
-  <input bind:this={image_input} type="file" id="input-file" style="display: none" />
+  <input bind:this={image_input} type="file" id="input-file" style="display: none" on:change={e => handleUpload(e)}  accept="image/png, image/jpeg"/>
 </div>
 
 <style>
@@ -36,11 +45,16 @@
 }
 
 .img-wrapper {
+  all: unset;
   width: 15%;
   overflow: hidden;
+  aspect-ratio: 1/1;
+  display: flex;
+  justify-items: center;
+  align-items: center;
 }
 
 img {
-  width: 100%;
+  height: 100%;
 }
 </style>
