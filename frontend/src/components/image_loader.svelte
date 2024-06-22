@@ -1,14 +1,32 @@
 <script>
+    import { onMount } from "svelte";
   import UploadDefault from "../assets/upload.png";
   import { tiles_width, tiles_height } from "../stores/config_store.js";
-  import { image, tiles } from "../stores/image_store.js";
+  import { image, image_width, image_height, tiles } from "../stores/image_store.js";
 
   let image_title = "No image selected";
   let image_url = "";
   let img;
   let selected = false;
   let image_input;
-  let to_delete;
+
+  onMount(() => {
+    // Set default tile size
+    let unsuscribe_tiles_width = tiles_width.subscribe((val) => {
+      $tiles_width = val;
+      console.log("Updating tiles width");
+      tiles.set(getTileArray(img, $image_width, $image_height));
+    });
+    let unsuscribe_tiles_height = tiles_height.subscribe((val) => {
+      $tiles_height = val;
+      tiles.set(getTileArray(img, $image_width, $image_height));
+    });
+
+    return () => {
+      unsuscribe_tiles_width();
+      unsuscribe_tiles_height();
+    };
+  });
 
   // @ts-ignore
   const handleUpload = async (e) => {
@@ -19,18 +37,16 @@
     $tiles = [];
 
     // Get dimensions
-    let img_w;
-    let img_h;
     try {
       let dimensions = await getImageWidthAndHeight(image_url);
-      img_w = dimensions.width;
-      img_h = dimensions.height;
+      image_width.set(dimensions.width);
+      image_height.set(dimensions.height);
     } catch (err) {
       console.log(err);
       return;
     }
 
-    tiles.set(getTileArray(img, img_w, img_h));
+    tiles.set(getTileArray(img, $image_width, $image_height));
   };
 
   const getImageWidthAndHeight = (objectURL) => {
@@ -47,6 +63,7 @@
   };
 
   const getTileArray = (img, img_w, img_h) => {
+    console.log("Calculating tiles");
     // Initialize tiles
     let total_cols = img_w / $tiles_width;
     let total_rows = img_h / $tiles_height;
@@ -169,6 +186,9 @@
 
   .img-container {
     width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .placeholder {
