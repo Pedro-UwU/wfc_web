@@ -12,14 +12,12 @@
   
   onMount(() => {
     let unsuscribed_img_w = image_width.subscribe((val) => {
-      possible_tiles_width = get_divisors(val);
-      console.log(possible_tiles_width);
-      select_width.value = possible_tiles_width[possible_tiles_width.length - 1];
+      possible_tiles_width = get_divisors(val).reverse();
+      tiles_width.set(possible_tiles_width[0]);
     });
     let unsuscribed_img_h = image_height.subscribe((val) => {
-      possible_tiles_height = get_divisors(val);
-      console.log(possible_tiles_height);
-      select_height.value = possible_tiles_height[possible_tiles_height.length - 1];
+      possible_tiles_height = get_divisors(val).reverse();
+      tiles_height.set(possible_tiles_height[0]);
     });
 
     return () => {

@@ -45,8 +45,6 @@
       console.log(err);
       return;
     }
-
-    tiles.set(getTileArray(img, $image_width, $image_height));
   };
 
   const getImageWidthAndHeight = (objectURL) => {
