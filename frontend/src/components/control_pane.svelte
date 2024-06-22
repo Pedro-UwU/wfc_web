@@ -3,7 +3,9 @@
 </script>
 
 <div>
+  <div class="img-loader">
   <ImageLoader/>
+  </div>
 </div>
 
 
