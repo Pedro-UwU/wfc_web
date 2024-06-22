@@ -1,6 +1,6 @@
 <!-- Dont look at this code. It is one of the ugliest code I have ever written. -->
 <script>
-  import { grid_width, grid_height } from "../stores/config_store.js";
+  import { grid_width, grid_height, tiles_width, tiles_height } from "../stores/config_store.js";
   import { tiles, selected } from "../stores/image_store.js";
   import { onMount } from "svelte";
   import { Canvas, FabricImage, Rect } from "fabric";
@@ -9,11 +9,12 @@
   let CANVAS_HEIGHT = 600;
 
   let grid = [];
+  let cells = [];
   let canvas;
   let overlay;
   let preview_image = null;
-  const cell_width = 50;
-  const cell_height = 50;
+  let cell_width = 50;
+  let cell_height = 50;
   let cell_x;
   let cell_y;
 
@@ -32,12 +33,47 @@
     }
   };
 
+  const set_cell_tiles = () => {
+    if (cells.length > 0) {
+      cells.forEach((cell) => {
+        canvas.remove(cell);
+      });
+      cells.length = 0;
+    }
+    const width = $grid_width;
+    const height = $grid_height;
+    // Calulate aspect ratio of tiles:
+    const aspect_ratio = $tiles_width / $tiles_height;
+    console.log("Tiles Width & Height", $tiles_width, $tiles_height);
+    console.log("aspect ratio", aspect_ratio);
+    cell_width = 50 * aspect_ratio;
+    cell_height = 50;
+    for (let i = 0; i < height; i++) {
+      for (let j = 0; j < width; j++) {
+        let rect = new Rect({
+          left: j * cell_width + (canvas.width - width * cell_width) / 2,
+          top: i * cell_height + (canvas.height - height * cell_height) / 2,
+          fill: "#313131",
+          width: cell_width,
+          height: cell_height,
+          strokeWidth: 1,
+          stroke: "#928374",
+          selectable: false,
+        });
+        cells.push(rect);
+        canvas.add(rect);
+      }
+    }
+    canvas.renderAll();
+  };
+
   const update_grid = () => {
     const width = $grid_width;
     const height = $grid_height;
     const new_grid = Array(height)
       .fill()
       .map(() => Array(width).fill(0));
+    console.log("B1");
     for (let i = 0; i < height; i++) {
       for (let j = 0; j < width; j++) {
         let rect = new Rect({
@@ -51,22 +87,15 @@
           selectable: false,
         });
         if (i > grid.length - 1) {
-          new_grid[i][j] = { value: -1, canvas_elem: rect };
+          new_grid[i][j] = { value: -1, canvas_elem: null };
         } else if (j > grid[i].length - 1) {
-          new_grid[i][j] = { value: -1, canvas_elem: rect };
+          new_grid[i][j] = { value: -1, canvas_elem: null };
         } else {
           new_grid[i][j] = { value: grid[i][j].value, canvas_elem: rect };
         }
       }
     }
     grid = new_grid;
-    grid.forEach((row) => {
-      row.forEach((cell) => {
-        if (cell.value === -1) {
-          canvas.add(cell.canvas_elem);
-        }
-      });
-    });
   };
 
   const handle_zoom = (opt) => {
@@ -189,6 +218,7 @@
 
     let img_elem = new Image();
     img_elem.src = $tiles[$selected];
+    console.log("Width & Height", img_elem.width, img_elem.height);
 
     if (grid[y][x].value === -1) {
       let tile_img = new FabricImage(img_elem, {
@@ -229,6 +259,7 @@
     canvas.setWidth(CANVAS_WIDTH);
     canvas.setHeight(CANVAS_HEIGHT);
 
+    set_cell_tiles();
     update_grid();
 
     canvas.on("mouse:wheel", function (opt) {
@@ -255,6 +286,7 @@
     const unsubscribe_width = grid_width.subscribe(update_grid);
     const unsubscribe_height = grid_height.subscribe(update_grid);
     const unsubscribe_selected = selected.subscribe(change_preview_image);
+    const init_tiles = tiles.subscribe(set_cell_tiles);
 
     return () => {
       unsubscribe_width();

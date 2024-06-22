@@ -55,6 +55,7 @@
     cursor: pointer;
     margin: 0.2%;
     min-width: 4vw;
+    max-width: 4vw;
     aspect-ratio: 1/1;
     display: flex;
     justify-content: center;
