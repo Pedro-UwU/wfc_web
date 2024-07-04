@@ -3,3 +3,5 @@
 frontend/.vscode/
 
 node_modules/
+
+Cargo.lock
