@@ -5,6 +5,7 @@
         grid_height,
         tiles_width,
         tiles_height,
+        grid
     } from "../stores/config_store.js";
     import { tiles, selected } from "../stores/image_store.js";
     import { onMount } from "svelte";
@@ -13,7 +14,6 @@
     let CANVAS_WIDTH = 800;
     let CANVAS_HEIGHT = 600;
 
-    let grid = [];
     let cells = [];
     let canvas;
     let overlay;
@@ -83,27 +83,30 @@
             .map(() => Array(width).fill(0));
         for (let i = 0; i < height; i++) {
             for (let j = 0; j < width; j++) {
-                if (i > grid.length - 1) {
+                if (i > $grid.length - 1) {
                     new_grid[i][j] = { value: -1, canvas_elem: null };
-                } else if (j > grid[i].length - 1) {
+                } else if (j > $grid[i].length - 1) {
                     new_grid[i][j] = { value: -1, canvas_elem: null };
                 } else {
                     new_grid[i][j] = {
-                        value: grid[i][j].value,
-                        canvas_elem: grid[i][j].canvas_elem,
+                        value: $grid[i][j].value,
+                        canvas_elem: $grid[i][j].canvas_elem,
                     };
                 }
             }
         }
-        grid = new_grid;
+        $grid = new_grid;
     };
 
     const reset_grid = () => {
         const width = $grid_width;
         const height = $grid_height;
-        grid = Array(height)
+        $grid = Array(height)
             .fill()
-            .map(() => Array(width).fill({ value: -1, canvas_elem: null }));
+            .map(() => 
+                Array(width)
+                .fill()
+                .map(() => { return { value: -1, canvas_elem: null }}));
 
     };
 
@@ -229,10 +232,10 @@
 
         let img_elem = new Image();
         img_elem.src = $tiles[$selected];
-        console.log("Width & Height", img_elem.width, img_elem.height);
 
-        if (grid[y][x].value === -1) {
-            console.log(cell_width, cell_height);
+        console.log("X: ", x, "Y: ", y, " value: " + $grid[y][x]);
+        if ($grid[y][x].value === -1) {
+            console.log("Inserting on empty cell");
             let tile_img = new FabricImage(img_elem, {
                 left: x * cell_width + min_x,
                 top: y * cell_height + min_y,
@@ -244,15 +247,13 @@
                 imageSmoothing: false,
             });
 
-            grid[y][x].canvas_elem = tile_img;
-            console.log("Inserting new tile: ", grid[y][x].canvas_elem);
-            canvas.add(grid[y][x].canvas_elem);
-            console.log(cell_width, cell_height);
+            $grid[y][x].canvas_elem = tile_img;
+            canvas.add($grid[y][x].canvas_elem);
         } else {
-            grid[y][x].canvas_elem.setElement(img_elem);
-            console.log("Replacing tile: ", grid[y][x].canvas_elem);
+            console.log("Tile selected on x: ", x, " y: ", y, $grid[y][x]);
+            $grid[y][x].canvas_elem.setElement(img_elem);
         }
-        grid[y][x].value = $selected;
+        $grid[y][x].value = $selected;
 
         canvas.renderAll();
     };
@@ -317,6 +318,6 @@
     });
 </script>
 
-<!-- Change the grid width and height -->
+<!-- All that shit only to return a canvas element -->
 
 <canvas id="c" width={CANVAS_WIDTH} height={CANVAS_HEIGHT} />

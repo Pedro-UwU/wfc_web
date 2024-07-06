@@ -2,7 +2,6 @@
   import { tiles, selected } from "../stores/image_store.js"
 
   let wrapper;
-  let selected_button;
   $: tiles_with_index = $tiles.map((t, i) => ({src: t, index: i}));
   const scroll = (e) => {
     let delta = e.deltaY || e.detail || e.wheelDelta;
