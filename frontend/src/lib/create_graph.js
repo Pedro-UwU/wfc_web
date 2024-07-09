@@ -36,5 +36,12 @@ export const create_graph = (grid) => {
 
         };
     }
+
+    for (let key in graph) {
+        graph[key]["n"] = Array.from(new Set(graph[key]["n"]));
+        graph[key]["e"] = Array.from(new Set(graph[key]["e"]));
+        graph[key]["s"] = Array.from(new Set(graph[key]["s"]));
+        graph[key]["w"] = Array.from(new Set(graph[key]["w"]));
+    }
     return graph;
 }

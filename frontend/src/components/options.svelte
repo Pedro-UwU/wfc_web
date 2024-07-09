@@ -1,9 +1,10 @@
 <script>
     import { onMount } from "svelte";
     import { image_width, image_height } from "../stores/image_store";
-    import { grid, tiles_width, tiles_height } from "../stores/config_store";
+    import { grid, grid_width, grid_height, tiles_width, tiles_height, result_width, result_height } from "../stores/config_store";
     import { get_divisors } from "../lib/utils.js";
     import { create_graph } from "../lib/create_graph.js";
+    import { send_graph } from "../lib/api.js";
 
     let possible_tiles_width = [];
     let possible_tiles_height = [];
@@ -38,12 +39,43 @@
 
     const handleSend = (_) => {
         let values = $grid.map((arr) => {
-            let row = arr.map((val) => val.value) 
-            return row
+            let row = arr.map((val) => val.value);
+            return row;
         });
-        console.log(create_graph(values));
+        let graph = create_graph(values);
+        // console.log(create_graph(values));
+        send_graph($result_width, $result_height, graph)
+    };
 
-    }
+    const handleSave = (_) => {
+        let dataStr = JSON.stringify(get_save_json());
+
+        const blob = new Blob([dataStr], { type: "application/json" }); 
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "data.json";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url); 
+    };
+
+    const get_save_json = () => {
+        let values = $grid.map((arr) => {
+            let row = arr.map((val) => val.value);
+            return row;
+        });
+        let dataToSave = {
+            gw: $grid_width,
+            gh: $grid_height,
+            tw: $tiles_width,
+            th: $tiles_height,
+            grid: values
+        }
+        return dataToSave;
+    };
 </script>
 
 <div class="options-wrapper">
@@ -76,5 +108,9 @@
 
     <div class="send-button">
         <button on:click={(e) => handleSend(e)}>Send</button>
+    </div>
+
+    <div class="save-button">
+        <button on:click={(e) => handleSave(e)}>Save</button>
     </div>
 </div>
