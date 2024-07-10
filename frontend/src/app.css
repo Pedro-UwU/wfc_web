@@ -39,7 +39,7 @@
 
 @font-face {
   font-family: 'Poppins';
-  src: url('Poppins-Regular.ttf');
+  src: url('./assets/Poppins-Regular.ttf');
   /* Regular */
 }
 
