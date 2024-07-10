@@ -11,13 +11,17 @@ const greet_bad = () => {
   socket.emit("greet", "UwU");
 }
 
+const build = (message_info) => {
+  socket.emit("build", message_info);
+}
+
 const setup_socket = () => {
   socket.on("greet back", () => { console.log("Greet back received") })
   socket.on("rude", (msg) => {console.log("Server said ", msg)})
 }
 
+
 setup_socket()
-console.log("Initializing socket");
 const socket_store = readable(socket);
 
 export { socket_store, greet, greet_bad };
