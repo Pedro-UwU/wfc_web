@@ -80,7 +80,7 @@
 
 
     const connectToSocket = (_) => {
-      greet_bad()
+      greet()
     }
 </script>
 
