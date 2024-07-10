@@ -4,8 +4,8 @@
     import { grid, grid_width, grid_height, tiles_width, tiles_height, result_width, result_height } from "../stores/config_store";
     import { get_divisors } from "../lib/utils.js";
     import { create_graph } from "../lib/create_graph.js";
-    import { send_graph } from "../lib/api.js";
-    import { socket_store, greet, greet_bad } from "../lib/socketio";
+    import { generate_dto } from "../lib/api.js";
+    import { socket_store, greet, build } from "../lib/socketio";
 
     let possible_tiles_width = [];
     let possible_tiles_height = [];
@@ -45,7 +45,9 @@
         });
         let graph = create_graph(values);
         // console.log(create_graph(values));
-        send_graph($result_width, $result_height, graph)
+        let dto = generate_dto($result_width, $result_height, graph)
+        console.log("DTO: ", dto);
+        build(dto)
     };
 
     const handleSave = (_) => {
@@ -80,7 +82,7 @@
 
 
     const connectToSocket = (_) => {
-      greet()
+      // build()
     }
 </script>
 

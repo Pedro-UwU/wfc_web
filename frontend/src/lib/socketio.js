@@ -12,7 +12,9 @@ const greet_bad = () => {
 }
 
 const build = (message_info) => {
-  socket.emit("build", message_info);
+  console.log("Sending build");
+  console.log(message_info);
+  socket.emit("build", JSON.stringify(message_info));
 }
 
 const setup_socket = () => {
@@ -24,7 +26,7 @@ const setup_socket = () => {
 setup_socket()
 const socket_store = readable(socket);
 
-export { socket_store, greet, greet_bad };
+export { socket_store, greet, build };
 
 
 
