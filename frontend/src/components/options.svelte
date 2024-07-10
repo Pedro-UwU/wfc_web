@@ -5,6 +5,7 @@
     import { get_divisors } from "../lib/utils.js";
     import { create_graph } from "../lib/create_graph.js";
     import { send_graph } from "../lib/api.js";
+    import { socket_store, greet, greet_bad } from "../lib/socketio";
 
     let possible_tiles_width = [];
     let possible_tiles_height = [];
@@ -76,6 +77,11 @@
         }
         return dataToSave;
     };
+
+
+    const connectToSocket = (_) => {
+      greet_bad()
+    }
 </script>
 
 <div class="options-wrapper">
@@ -112,5 +118,10 @@
 
     <div class="save-button">
         <button on:click={(e) => handleSave(e)}>Save</button>
+    </div>
+
+    <!-- TO DELETE -->
+    <div>
+        <button on:click={(e) => connectToSocket(e)}>Conenct</button>
     </div>
 </div>

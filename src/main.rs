@@ -1,12 +1,30 @@
-use socketioxide::{extract::SocketRef, SocketIo};
+use socketioxide::{extract::{Data, SocketRef}, SocketIo};
 use tokio::net::TcpListener;
-use tower::{Layer, ServiceBuilder};
+use tower::ServiceBuilder;
 use tower_http::{services::ServeDir, cors::CorsLayer};
 use tracing::info;
 use tracing_subscriber::FmtSubscriber;
 
 async  fn on_connect(socket: SocketRef) {
     info!("Socket connected: {}", socket.id);
+    // Define the events:
+    // - "Build" Client -> Server
+    // - "Building" Server -> Client
+    // - "Step" Server -> Client
+    // - "Finished" Server -> Client
+    // - "Error" Server -> Client
+   
+    
+    // Little greeting to test with frontend
+    socket.on("greet", |socket: SocketRef, Data::<String>(data)| {
+        if data == "Hi" {
+            info!("Greeting socket {}", socket.id);
+            let _ = socket.emit("greet back", "Hello!");
+        } else {
+            info!("Socket {} was rude!", socket.id);
+            let _ = socket.emit("rude", "You have to say 'Hi'");
+        }
+    });
 }
 
 #[tokio::main]
