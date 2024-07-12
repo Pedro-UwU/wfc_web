@@ -23,10 +23,8 @@ pub fn start_new_generation(info: BuildInfo, neighbors: HashMap<usize, Neighbors
     // 2) Construct grid
     let mut grid = create_full_grid(info.width, info.height, &values);
     info!("Grid Generated");
-    let mut total_left = info.width * info.height;
 
-    while total_left > 0 {
-        info!("Total left: {}", total_left);
+    while has_uncollapsed(&grid) {
         // 3) Collapse the cell with least entropy
         let collapsed_index = match collapse_random_cell(info.width, info.height, &mut grid) {
             Some(index) => index,
@@ -49,12 +47,19 @@ pub fn start_new_generation(info: BuildInfo, neighbors: HashMap<usize, Neighbors
         if let Err(msg) = could_propagate {
             error!(msg);
             return;
-        } else {
-            total_left -= 1;
         }
     }
     info!("Generation finished");
     info!("Grid: {:?}", grid);
+}
+
+fn has_uncollapsed<T>(grid: &Vec<Vec<T>>) -> bool {
+    for v in grid {
+       if v.len() > 1 {
+           return true
+       }
+    }
+    false
 }
 
 fn create_full_grid(width: usize, height: usize, values: &Vec<usize>) -> Vec<Vec<usize>> {
