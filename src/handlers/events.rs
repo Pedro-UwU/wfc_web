@@ -16,8 +16,8 @@ pub struct BuildMessage {
 
 #[derive(Serialize, Debug)]
 pub struct StepMessage {
-    pub index: usize,
-    pub value: usize,
+    pub indices: Vec<usize>,
+    pub values: Vec<usize>,
 }
 
 pub fn handle_build(socket: SocketRef, data: BuildMessage) {
@@ -28,13 +28,13 @@ pub fn handle_build(socket: SocketRef, data: BuildMessage) {
         start_new_generation(
             data.info,
             data.graph,
-            Box::new(move |index: usize, value: usize| send_step(socket_clone.clone(), index, value)) // Step Callback
+            Box::new(move |indices: Vec<usize>, values: Vec<usize>| send_step(socket_clone.clone(), indices, values)) // Step Callback
         );
     });
 }
 
-fn send_step(socket: SocketRef, index: usize, value: usize) {
-    let data = serde_json::to_string(&StepMessage { index, value }).unwrap();
-    // info!("CALLBACK FOR {} with value {}", index, value);
+fn send_step(socket: SocketRef, indices: Vec<usize>, values: Vec<usize>) {
+    let data = serde_json::to_string(&StepMessage { indices, values}).unwrap();
+    info!("Sending step");
     let _ = socket.emit("step", data);
 }

@@ -19,7 +19,7 @@ enum Dirs {
 pub fn start_new_generation(
     info: BuildInfo,
     neighbors: HashMap<usize, Neighbors>,
-    step_callback: Box<dyn Fn(usize, usize)>,
+    step_callback: Box<dyn Fn(Vec<usize>, Vec<usize>)>,
 ) {
     // 1) Get the possible values
     let values: Vec<usize> = neighbors.keys().map(|&x| x).collect();
@@ -64,30 +64,28 @@ pub fn start_new_generation(
             .filter_map(|(i, val)| if val.len() <= 1 { Some(i) } else { None })
             .collect();
 
-        let new_collapsed: HashSet<usize> =
+        let new_collapsed: Vec<usize> =
             total_collapsed.difference(&collapsed).map(|&x| x).collect();
 
-        let mut impossible_cells = false;
-        for i in new_collapsed {
-            let value = match grid[i].first() {
-                Some(x) => *x,
-                None => {
-                    impossible_cells = true;
-                    continue;
-                }
-            };
-            step_callback(i, value);
-        }
+        let new_values: Vec<Option<&usize>> = new_collapsed.clone().into_iter()
+            .map(|x| grid[x].get(0))
+            .collect();
+        let impossible_values = new_values.clone().into_iter().filter(|&x: &Option<_>| match x  {
+            None => true,
+            _ => false
+        }).count() > 0;
         collapsed = total_collapsed;
+        let new_values: Vec<usize> = new_values.into_iter().filter_map(|x| x.map(|&y| y)).collect();
 
-        if impossible_cells {
+        if impossible_values {
             info!("Impossible cells");
             return;
         }
-    }
+        step_callback(new_collapsed, new_values);
 
+    }
+    step_callback(collapsed.into_iter().collect(), grid.into_iter().flatten().collect());
     info!("Generation finished");
-    info!("Grid: {:?}", grid);
 }
 
 fn has_uncollapsed<T>(grid: &Vec<Vec<T>>) -> bool {
