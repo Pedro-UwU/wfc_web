@@ -27,7 +27,7 @@ pub fn start_new_generation(
     // 2) Construct grid
     let mut grid = create_full_grid(info.width, info.height, &values);
     // info!("Grid Generated");
-    let collapsed: HashSet<usize> = HashSet::new();
+    let mut collapsed: HashSet<usize> = HashSet::new();
 
     while has_uncollapsed(&grid) {
         // 3) Collapse the cell with least entropy
@@ -72,21 +72,22 @@ pub fn start_new_generation(
             let value = match grid[i].first() {
                 Some(x) => *x,
                 None => {
-                   impossible_cells = true;
-                   continue;
+                    impossible_cells = true;
+                    continue;
                 }
             };
             step_callback(i, value);
         }
+        collapsed = total_collapsed;
 
         if impossible_cells {
             info!("Impossible cells");
             return;
         }
-
-        info!("Generation finished");
-        info!("Grid: {:?}", grid);
     }
+
+    info!("Generation finished");
+    info!("Grid: {:?}", grid);
 }
 
 fn has_uncollapsed<T>(grid: &Vec<Vec<T>>) -> bool {
