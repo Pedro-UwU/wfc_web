@@ -16,13 +16,18 @@ enum Dirs {
     West = 3,
 }
 
-pub fn start_new_generation(info: BuildInfo, neighbors: HashMap<usize, Neighbors>) {
+pub fn start_new_generation(
+    info: BuildInfo,
+    neighbors: HashMap<usize, Neighbors>,
+    step_callback: Box<dyn Fn(usize, usize)>,
+) {
     // 1) Get the possible values
     let values: Vec<usize> = neighbors.keys().map(|&x| x).collect();
     info!("Possible Values: {:?}", values);
     // 2) Construct grid
     let mut grid = create_full_grid(info.width, info.height, &values);
-    info!("Grid Generated");
+    // info!("Grid Generated");
+    let collapsed: HashSet<usize> = HashSet::new();
 
     while has_uncollapsed(&grid) {
         // 3) Collapse the cell with least entropy
@@ -33,10 +38,10 @@ pub fn start_new_generation(info: BuildInfo, neighbors: HashMap<usize, Neighbors
                 return;
             }
         };
-        info!(
-            "Collapsed cell {} to value {:?}",
-            collapsed_index, grid[collapsed_index]
-        );
+        // info!(
+        //     "Collapsed cell {} to value {:?}",
+        //     collapsed_index, grid[collapsed_index]
+        // );
 
         // 4) Propagate restrictions
         let could_propagate = propagate_restrictions(
@@ -51,9 +56,37 @@ pub fn start_new_generation(info: BuildInfo, neighbors: HashMap<usize, Neighbors
             error!(msg);
             return;
         }
+
+        let total_collapsed: HashSet<usize> = grid
+            .clone()
+            .into_iter()
+            .enumerate()
+            .filter_map(|(i, val)| if val.len() <= 1 { Some(i) } else { None })
+            .collect();
+
+        let new_collapsed: HashSet<usize> =
+            total_collapsed.difference(&collapsed).map(|&x| x).collect();
+
+        let mut impossible_cells = false;
+        for i in new_collapsed {
+            let value = match grid[i].first() {
+                Some(x) => *x,
+                None => {
+                   impossible_cells = true;
+                   continue;
+                }
+            };
+            step_callback(i, value);
+        }
+
+        if impossible_cells {
+            info!("Impossible cells");
+            return;
+        }
+
+        info!("Generation finished");
+        info!("Grid: {:?}", grid);
     }
-    info!("Generation finished");
-    info!("Grid: {:?}", grid);
 }
 
 fn has_uncollapsed<T>(grid: &Vec<Vec<T>>) -> bool {
@@ -140,7 +173,7 @@ fn propagate_restrictions(
         let (x, y) = from_index_to_coords(current, width, height);
         // info!("Propagating cell {},{}", x, y);
         let neighbors = get_valid_neighbors(x, y, width, height);
-        info!("Neighbors of cell {} are {:?}", current, neighbors);
+        // info!("Neighbors of cell {} are {:?}", current, neighbors);
         let reduced: bool = match reduce_cell_entropy(current, &neighbors, grid, graph) {
             Ok(b) => b,
             Err(msg) => {
@@ -217,21 +250,21 @@ fn reduce_cell_entropy(
         .intersection(&all_possible_values)
         .cloned()
         .collect();
-    info!(
-        "Current cell {} - Current values: {:?}, New Values: {:?}",
-        index, current_values, new_values
-    );
+    // info!(
+    //     "Current cell {} - Current values: {:?}, New Values: {:?}",
+    //     index, current_values, new_values
+    // );
     if new_values.len() == current_values.len() {
-        info!(
-            "No reductions on cell {}. Current Values: {:?}, New Values: {:?}",
-            index, current_values, new_values
-        );
+        // info!(
+        //     "No reductions on cell {}. Current Values: {:?}, New Values: {:?}",
+        //     index, current_values, new_values
+        // );
         return Ok(false);
     }
-    info!(
-        "Cell {} has reduced it's entropy to {:?}",
-        index, new_values
-    );
+    // info!(
+    //     "Cell {} has reduced it's entropy to {:?}",
+    //     index, new_values
+    // );
 
     grid[index] = new_values.into_iter().collect();
     Ok(true)
