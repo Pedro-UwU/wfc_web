@@ -33,7 +33,10 @@ pub fn start_new_generation(info: BuildInfo, neighbors: HashMap<usize, Neighbors
                 return;
             }
         };
-        info!("Collapsed cell {:?} to value {:?}", from_index_to_coords(collapsed_index, info.width, info.height), grid[collapsed_index]);
+        info!(
+            "Collapsed cell {} to value {:?}",
+            collapsed_index, grid[collapsed_index]
+        );
 
         // 4) Propagate restrictions
         let could_propagate = propagate_restrictions(
@@ -55,9 +58,9 @@ pub fn start_new_generation(info: BuildInfo, neighbors: HashMap<usize, Neighbors
 
 fn has_uncollapsed<T>(grid: &Vec<Vec<T>>) -> bool {
     for v in grid {
-       if v.len() > 1 {
-           return true
-       }
+        if v.len() > 1 {
+            return true;
+        }
     }
     false
 }
@@ -113,7 +116,15 @@ fn propagate_restrictions(
     let mut marked: HashSet<usize> = HashSet::new();
     let mut result: Result<(), Box<dyn Error>> = Ok(());
 
-    queue.push_back(center_of_prop);
+    // Insert the center
+    marked.insert(center_of_prop);
+
+    let (center_x, center_y) = from_index_to_coords(center_of_prop, width, height);
+    let center_neighbors = get_valid_neighbors(center_x, center_y, width, height);
+    // Push the neighbors from the center
+    for n in center_neighbors {
+        queue.push_back(n.0);
+    }
 
     // This is basically a BFS
     while !queue.is_empty() {
@@ -129,17 +140,23 @@ fn propagate_restrictions(
         let (x, y) = from_index_to_coords(current, width, height);
         // info!("Propagating cell {},{}", x, y);
         let neighbors = get_valid_neighbors(x, y, width, height);
-        let reduced = reduce_cell_entropy(current, &neighbors, grid, graph);
-        if let Err(msg) = reduced {
-            error!("Could not reduce after collapsing {},{}: {}", x, y, msg);
-            result = Err("Could not reduce grid".into());
-            break;
-        }
-        for (i, _) in neighbors {
-            if marked.contains(&i) {
-                continue;
+        info!("Neighbors of cell {} are {:?}", current, neighbors);
+        let reduced: bool = match reduce_cell_entropy(current, &neighbors, grid, graph) {
+            Ok(b) => b,
+            Err(msg) => {
+                error!("Could not reduce after collapsing {},{}: {}", x, y, msg);
+                result = Err("Could not reduce grid".into());
+                break;
             }
-            queue.push_back(i);
+        };
+
+        if reduced {
+            for (i, _) in neighbors {
+                if marked.contains(&i) {
+                    continue;
+                }
+                queue.push_back(i);
+            }
         }
     }
     result
@@ -167,7 +184,7 @@ fn reduce_cell_entropy(
     neighbors: &Vec<(usize, Dirs)>,
     grid: &mut Vec<Vec<usize>>,
     graph: &HashMap<usize, Neighbors>,
-) -> Result<(), Box<dyn Error>> {
+) -> Result<bool, Box<dyn Error>> {
     let all_possible_values_set = neighbors
         .into_iter()
         // Map each neighbors to an array of possible values
@@ -177,15 +194,13 @@ fn reduce_cell_entropy(
                 _ => Vec::new(),
             }
         })
+        .map(|vec| vec.into_iter().collect::<HashSet<usize>>())
         // Reduce the array of array to a set of the intersection of all possible_values from neighbors
-        .fold(None, |acc: Option<HashSet<usize>>, vec| {
-            let vec_set: HashSet<usize> = vec.into_iter().collect(); // Convert the vector to a set
-            match acc {
-                None => Some(vec_set),
-                Some(set) => {
-                    let new_set: HashSet<usize> = set.intersection(&vec_set).cloned().collect();
-                    Some(new_set)
-                }
+        .fold(None, |acc: Option<HashSet<usize>>, curr_set| match acc {
+            None => Some(curr_set),
+            Some(set) => {
+                let new_set: HashSet<usize> = set.intersection(&curr_set).cloned().collect();
+                Some(new_set)
             }
         });
 
@@ -194,13 +209,32 @@ fn reduce_cell_entropy(
         None => HashSet::new(),
     };
 
+    if all_possible_values.len() == 0 {
+        info!("Cell {} has 0 possible values", index);
+    }
     let current_values: HashSet<usize> = grid[index].clone().into_iter().collect();
-    let new_values: HashSet<usize> = current_values.intersection(&all_possible_values).cloned().collect();
-
-    //info!("Cell {} has reduced it's entropy to {:?}", index, new_values);
+    let new_values: HashSet<usize> = current_values
+        .intersection(&all_possible_values)
+        .cloned()
+        .collect();
+    info!(
+        "Current cell {} - Current values: {:?}, New Values: {:?}",
+        index, current_values, new_values
+    );
+    if new_values.len() == current_values.len() {
+        info!(
+            "No reductions on cell {}. Current Values: {:?}, New Values: {:?}",
+            index, current_values, new_values
+        );
+        return Ok(false);
+    }
+    info!(
+        "Cell {} has reduced it's entropy to {:?}",
+        index, new_values
+    );
 
     grid[index] = new_values.into_iter().collect();
-    Ok(())
+    Ok(true)
 }
 
 fn get_possibilities_from_neighbor(
