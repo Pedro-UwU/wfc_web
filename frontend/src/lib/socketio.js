@@ -25,11 +25,13 @@ const setup_socket = () => {
   socket.on("step", (msg) => {
     // Convert to js object
     let o = JSON.parse(msg);
-    let index = o["index"];
-    let value = o["value"];
-    let values = get(result_values);
-    values[index] = value;
-    result_values.set(values);
+    let indices = o["indices"];
+    let values = o["values"];
+    let current_values = get(result_values);
+    indices.forEach((i) => {
+      current_values[i] = values[i];
+    });
+    result_values.set(current_values);
   })
 }
 

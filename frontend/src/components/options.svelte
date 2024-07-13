@@ -15,11 +15,13 @@
   import { create_graph } from "../lib/create_graph.js";
   import { generate_dto } from "../lib/api.js";
   import { socket_store, greet, build } from "../lib/socketio";
+    import ResultViewer from "./ResultViewer.svelte";
 
   let possible_tiles_width = [];
   let possible_tiles_height = [];
   let select_width;
   let select_height;
+  let show_modal = false;
 
   onMount(() => {
     let unsuscribed_img_w = image_width.subscribe((val) => {
@@ -31,14 +33,9 @@
       tiles_height.set(possible_tiles_height[0]);
     });
 
-    let unsuscibe_result_values = result_values.subscribe((val) => {
-      console.log("RESULT: ", val);
-    });
-
     return () => {
       unsuscribed_img_w();
       unsuscribed_img_h();
-      unsuscibe_result_values();
     };
   });
 
@@ -63,6 +60,7 @@
     let dto = generate_dto($result_width, $result_height, graph);
     console.log("DTO: ", dto);
     build(dto);
+    show_modal = true
   };
 
   const handleSave = (_) => {
@@ -140,4 +138,6 @@
   <div>
     <button on:click={(e) => connectToSocket(e)}>Conenct</button>
   </div>
+
+  <ResultViewer bind:show_modal/>
 </div>

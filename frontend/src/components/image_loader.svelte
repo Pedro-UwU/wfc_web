@@ -102,7 +102,6 @@
         canvas.width = img.naturalWidth;
         context.drawImage(img, 0, 0, canvas.height, canvas.width);
         let base64String = canvas.toDataURL();
-        console.log(base64String);
     };
 </script>
 
