@@ -1,6 +1,7 @@
 // Import socket
 import { io } from "socket.io-client"
-import { readable } from "svelte/store";
+import { readable, get } from "svelte/store";
+import { result_values } from "../stores/config_store";
 
 const socket = io("http://127.0.0.1:3000"); // TODO make URL an env variable
 const greet = () => {
@@ -20,6 +21,16 @@ const build = (message_info) => {
 const setup_socket = () => {
   socket.on("greet back", () => { console.log("Greet back received") })
   socket.on("rude", (msg) => {console.log("Server said ", msg)})
+  
+  socket.on("step", (msg) => {
+    // Convert to js object
+    let o = JSON.parse(msg);
+    let index = o["index"];
+    let value = o["value"];
+    let values = get(result_values);
+    values[index] = value;
+    result_values.set(values);
+  })
 }
 
 

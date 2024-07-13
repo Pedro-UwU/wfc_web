@@ -6,4 +6,5 @@ let image_height = writable(0);
 let tiles = writable([]);
 let selected = writable(-1);
 
+
 export { image, image_width, image_height, tiles, selected };

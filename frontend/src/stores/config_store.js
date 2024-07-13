@@ -9,6 +9,7 @@ let tiles_height = writable(16);
 
 let result_width = writable(10);
 let result_height = writable(10);
+let result_values = writable([]);
 
 
-export { grid_width, grid_height, tiles_height, tiles_width, grid, result_width, result_height }
+export { grid_width, grid_height, tiles_height, tiles_width, grid, result_width, result_height, result_values }
