@@ -20,6 +20,7 @@ pub fn start_new_generation(
     info: BuildInfo,
     neighbors: HashMap<usize, Neighbors>,
     step_callback: Box<dyn Fn(Vec<usize>, Vec<usize>)>,
+    error_callback: Box<dyn Fn(String)>
 ) {
     // 1) Get the possible values
     let values: Vec<usize> = neighbors.keys().map(|&x| x).collect();
@@ -53,6 +54,7 @@ pub fn start_new_generation(
         );
 
         if let Err(msg) = could_propagate {
+            error_callback(msg.to_string());
             error!(msg);
             return;
         }
@@ -79,6 +81,7 @@ pub fn start_new_generation(
 
         if impossible_values {
             info!("Impossible cells");
+            error_callback(format!("Impossible values when collapsing {}", collapsed_index).to_string());
             return;
         }
         step_callback(new_collapsed, new_values);
