@@ -1,0 +1,34 @@
+:root {
+  --background: #151A1E;
+  --background-dim: #0D1012;
+  --text: #EEF0F2;
+  --text-dim: #595959;
+  --text-dark: #101010;
+  --text-dark-dim: #151515;
+  --primary: #ADBBC9;
+  --primary-shade: #798086;
+  --secondary: #3C5167;
+  --secondary-shade: #505962;
+  --accent: #5E86AC;
+  --success: #54804A;
+  --error: #983333;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('./assets/Poppins-Regular.ttf');
+  /* Regular */
+}
+
+
+
+body {
+  background: var(--background-dim);
+  color: var(--text);
+  font-family: Poppins, Arial;  
+}
