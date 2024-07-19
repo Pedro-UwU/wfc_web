@@ -1,9 +1,11 @@
 <script>
-import Button from "./ui/button.svelte";
+// import Button from "./ui/button.svelte";
+import Header from "./components/header.svelte";
 </script>
 
 <main>
-  <Button type="accent" size="big" text="HOLA" onClick={() => console.log("ASD")}/>
+  <h1>Wave Function Collapse</h1>
+  <Header/>
 </main>
 
 <style>

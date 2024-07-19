@@ -45,7 +45,23 @@
 
 
 body {
-  background: var(--background-dim);
+  background: var(--background);
   color: var(--text);
   font-family: Poppins, Arial;  
+  margin: var(--margin-l);
+}
+
+h1 {
+  margin-block: var(--margin-xl);
+  font-size: var(--text-giant);
+}
+
+h2 {
+  margin-block: var(--margin-l);
+  font-size: var(--text-big);
+}
+
+p {
+  margin-inline: var(--margin-m);
+  font-size: var(--text-medium);
 }
