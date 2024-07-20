@@ -3,12 +3,11 @@
     image,
     image_width,
     image_height,
-    tile_width,
-    tile_height,
-    tiles,
   } from "../stores/image_store";
-  import { get_tile_array, get_image_width_and_height } from "../lib/utils.js";
+  import { tiles, tile_height, tile_width, tiles_params } from "../stores/tiles_store";
+  import { get_tile_array } from "../lib/utils.js";
   import { onMount } from "svelte";
+  import { Tile } from "../lib/tile.js";
 
   onMount(() => {
     let unsuscribe_image_store = image.subscribe((new_img) => {
@@ -24,6 +23,8 @@
           $tile_height,
         );
         tiles.set(temp)
+        let params = temp.map((_,  index) => new Tile(index))
+        tiles_params.set(params);
       };
     });
 

@@ -1,7 +1,8 @@
 <script>
   import Button from "../ui/button.svelte";
   import { get_divisors, get_image_width_and_height } from "../lib/utils.js";
-  import { image, image_name, image_width, image_height, tile_width, tile_height } from "../stores/image_store.js";
+  import { image, image_name, image_width, image_height } from "../stores/image_store.js";
+  import { tile_width, tile_height } from "../stores/tiles_store";
 
   export let show_modal; // It is false
   let dialog;

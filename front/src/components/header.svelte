@@ -6,9 +6,11 @@
     image_width,
     image_height,
     image_name,
-    tile_width,
-    tile_height,
   } from "../stores/image_store.js";
+  import {
+    tile_width,
+    tile_height
+  } from "../stores/tiles_store.js";
 
   let tileset_width;
   let tileset_height;
@@ -86,6 +88,7 @@
     display: flex;
     align-items: center;
     border-radius: var(--border-radius-m);
+    flex: 0 0 auto;
   }
 
   .img-uploader {
