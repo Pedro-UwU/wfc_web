@@ -1,7 +1,7 @@
 <script>
   import Button from "../ui/button.svelte";
   import { get_divisors, get_image_width_and_height } from "../lib/utils.js";
-  import { image, image_name, tile_width, tile_height } from "../stores/image_store.js";
+  import { image, image_name, image_width, image_height, tile_width, tile_height } from "../stores/image_store.js";
 
   export let show_modal; // It is false
   let dialog;
@@ -21,6 +21,7 @@
   let error_tw;
   let error_th;
 
+  //@ts-ignore
   const get_possible_divisors = (width, height) => {
     possible_img_w = get_divisors(width);
     possible_img_h = get_divisors(height);
@@ -39,7 +40,6 @@
   };
 
   const handle_save = async () => {
-    image.set(img_url);
     let valid = true;
     if (tile_w === 0) {
       valid = false;
@@ -58,9 +58,15 @@
     if (!valid) {
      return;
     }
+    let img_elem = new Image(img_w, img_h);
+    img_elem.src = img_url;
+
     tile_width.set(tile_w);
     tile_height.set(tile_h);
     image_name.set(img_title);
+    image_width.set(img_w);
+    image_height.set(img_h);
+    image.set(img_elem); // Is importatnt to call it last
     dialog.close();
   };
 

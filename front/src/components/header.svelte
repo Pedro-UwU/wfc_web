@@ -1,18 +1,22 @@
 <script>
   import Button from "../ui/button.svelte";
   import UploadModal from "./upload_modal.svelte";
-  import { get_image_width_and_height } from "../lib/utils";
-  import { image, image_name, tile_width, tile_height } from "../stores/image_store.js";
+  import {
+    image,
+    image_width,
+    image_height,
+    image_name,
+    tile_width,
+    tile_height,
+  } from "../stores/image_store.js";
 
   let tileset_width;
   let tileset_height;
   let tiles_width_px = "-";
   let tiles_height_px = "-";
   $: if ($image) {
-    get_image_width_and_height($image).then((dim) => {
-      tileset_width = dim.width.toString();
-      tileset_height = dim.height.toString();
-    });
+    tileset_width = $image_width.toString();
+    tileset_height = $image_height.toString();
 
     tiles_width_px = $tile_width.toString();
     tiles_height_px = $tile_height.toString();
@@ -21,7 +25,7 @@
     tileset_height = "-";
     tiles_width_px = "-";
     tiles_height_px = "-";
-  };
+  }
 
   let show_modal = false;
 
@@ -34,15 +38,15 @@
 <div class="header">
   <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions (because of reasons) -->
   <div class="img-uploader" on:click={() => show_modal_on()}>
-    {#if !($image)}
-    <!-- plus symbol -->
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-      <path
-        d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z"
-      />
-    </svg>
+    {#if !$image}
+      <!-- plus symbol -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+        <path
+          d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z"
+        />
+      </svg>
     {:else}
-      <img src={$image} alt="tileset" />
+      <img src={$image.src} alt="tileset" />
     {/if}
   </div>
   <div class="tileset-info">
@@ -53,7 +57,7 @@
         <h2>{$image_name}</h2>
       {/if}
     {:else}
-        <h2 class="faded">Upload an image</h2>
+      <h2 class="faded">Upload an image</h2>
     {/if}
     <div class="info-list {$image_name ? '' : 'faded'}">
       <li>Tileset Width: {tileset_width}</li>

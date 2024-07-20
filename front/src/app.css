@@ -3,7 +3,7 @@
   --background-dim: #110E15;
   --text: #ECEAF0;
   --text-dim: #888198;
-  --text-dim-50: rgba(136, 129,152, 0.5);
+  --text-dim-50: rgba(136, 129, 152, 0.5);
   --primary: #AEA1C6;
   --primary-shade: #B1AABD;
   --secondary: #503F70;
@@ -35,6 +35,7 @@
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
+  image-rendering: pixelated;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
@@ -51,7 +52,7 @@
 body {
   background: var(--background);
   color: var(--text);
-  font-family: Poppins, Arial;  
+  font-family: Poppins, Arial;
   margin: var(--margin-l);
 }
 
