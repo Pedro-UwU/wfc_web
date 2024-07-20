@@ -3,6 +3,7 @@ export class Tile {
     this.tile_id = tile_id;
     this.active = false;
     this.can_rotate = false;
+    this.weight = 1;
     this.north = [];
     this.east = [];
     this.south = [];

@@ -1,6 +1,7 @@
 <script>
 // import Button from "./ui/button.svelte";
 import Header from "./components/header.svelte";
+    import TileCard from "./components/tile_card.svelte";
     import TileSelector from "./components/tile_selector.svelte";
     import TileSplicer from "./components/tile_splicer.svelte";
 </script>
@@ -12,6 +13,9 @@ import Header from "./components/header.svelte";
   <div class="tiles">
     <div class="tile-selector-wrapper">
       <TileSelector/>
+    </div>
+    <div class="tile-card-wrapper">
+      <TileCard/>
     </div>
   </div>
 </main>
@@ -38,4 +42,11 @@ import Header from "./components/header.svelte";
     flex-direction: column;
     overflow: hidden;
   }
+  
+  .tile-card-wrapper {
+    min-width: calc(8 * var(--text-giant));
+    margin-left: var(--margin-l);
+    height: 100%;
+  }
+
 </style>

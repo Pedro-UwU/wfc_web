@@ -1,35 +1,74 @@
 <script>
+  import { onMount } from "svelte";
   import { tiles, tiles_params, selected_tile } from "../stores/tiles_store";
-    import Button from "../ui/button.svelte";
+  import Button from "../ui/button.svelte";
+
+  let tile_items;
 
   const handle_click = (id) => {
     selected_tile.set(id);
   };
 
+  onMount(() => {
+    let unsuscribe_tile_params = tiles_params.subscribe((new_val) => {
+      
+      // for (let i = 0; i < $tiles_params.length; i++) {
+      //   if (!tile_items.children) {
+      //     return;
+      //   }
+      //   if (!tile_items.children[i]) {
+      //     return;
+      //   }
+      //   // Here I need to acces the i child of tile_items and do something
+      //   let child = tile_items.children[i];
+
+      //   if (new_val[i].active) {
+      //     child.classList.add('active');
+      //   } else {
+      //     child.classList.remove('active');
+      //   }
+      // }
+    });
+
+    return () => {
+      unsuscribe_tile_params();
+    };
+  });
+
   const handle_import = () => {
     console.log("import");
-  }
+  };
 
   const handle_export = () => {
     console.log("export");
-  }
+  };
 </script>
 
 <div class="tile-selector">
   <div class="title">
     <h2>Tiles</h2>
     <div class="buttons">
-      <Button onClick={handle_export} size="big" type="secondary" text="EXPORT"/>
-      <Button onClick={handle_import} size="big" type="secondary" text="IMPORT"/>
+      <Button
+        onClick={handle_export}
+        size="big"
+        type="secondary"
+        text="EXPORT"
+      />
+      <Button
+        onClick={handle_import}
+        size="big"
+        type="secondary"
+        text="IMPORT"
+      />
     </div>
   </div>
-  <div class="tile-items">
+  <div bind:this={tile_items} class="tile-items">
     {#each $tiles_params as param}
       <!--svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions-->
       <div
         class="tile-option"
         data-index={param.tile_id}
-        on:click={(e) => handle_click(param.tile_id)}
+        on:click={() => handle_click(param.tile_id)}
       >
         <img src={$tiles[param.tile_id]} alt="Tile {param.tile_id}" />
       </div>
@@ -55,13 +94,13 @@
     margin: 0 !important;
     flex: 1;
   }
-  .tile-items{
+  .tile-items {
     overflow-y: auto;
     display: flex;
     flex-wrap: wrap;
     align-content: start;
     width: calc(100% - var(--margin-m) - var(--margin-l));
-    height: calc(100% - 3*var(--margin-l) - var(--text-big));
+    height: calc(100% - 3 * var(--margin-l) - var(--text-big));
     margin-inline: var(--margin-m);
   }
 
@@ -80,6 +119,10 @@
 
   .tile-option:hover {
     scale: 1.1;
+  }
+
+  .active {
+    background: var(--accent);
   }
 
   img {

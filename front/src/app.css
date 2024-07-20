@@ -70,3 +70,54 @@ p {
   margin-inline: var(--margin-m);
   font-size: var(--text-medium);
 }
+
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  display: flex;
+  width: var(--text-medium);
+  height: var(--text-medium);
+  border-radius: var(--border-radius-s);
+  align-content: center;
+  justify-content: center;
+  font: inherit;
+  font-size: var(--text-medium);
+  background: var(--secondary-shade);
+  cursor: pointer;
+}
+
+input[type="checkbox"]::before {
+  clip-path: polygon( 99.977% 25.916%,99.977% 25.916%,100.747% 26.892%,101.345% 27.959%,101.772% 29.096%,102.029% 30.279%,102.114% 31.485%,102.029% 32.691%,101.772% 33.874%,101.345% 35.011%,100.747% 36.079%,99.977% 37.054%,41.623% 100%,41.623% 100%,40.718% 100.83%,39.728% 101.475%,38.675% 101.936%,37.578% 102.213%,36.46% 102.305%,35.342% 102.213%,34.245% 101.936%,33.192% 101.475%,32.202% 100.83%,31.297% 100%,2.12% 68.527%,2.12% 68.527%,1.351% 67.551%,0.752% 66.484%,0.325% 65.347%,0.068% 64.164%,-0.017% 62.958%,0.068% 61.752%,0.325% 60.569%,0.752% 59.432%,1.351% 58.364%,2.12% 57.389%,2.12% 57.389%,3.024% 56.559%,4.014% 55.913%,5.068% 55.452%,6.165% 55.176%,7.283% 55.084%,8.401% 55.176%,9.497% 55.452%,10.551% 55.913%,11.541% 56.559%,12.446% 57.389%,36.471% 83.28%,89.674% 25.916%,89.674% 25.916%,90.579% 25.086%,91.569% 24.441%,92.622% 23.98%,93.719% 23.703%,94.837% 23.611%,95.955% 23.703%,97.052% 23.98%,98.105% 24.441%,99.095% 25.086%,100% 25.916% );
+  content: "";
+  width: var(--text-medium);
+  height: var(--text-medium);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: scale(0) translateY(-20%);
+  transition: transform 0.1s ease-in-out;
+  background: var(--accent);
+}
+
+input[type="checkbox"]:checked::before {
+  transform: scale(1.1) translateY(-20%);
+}
+
+input[type="checkbox"]:checked {
+  background: var(--primary);
+}
+
+input[type="number"] {
+  appearance: none;
+  -webkit-appearance: none;
+  border: none;
+  border-radius: var(--border-radius-s);
+  background: var(--primary-shade);
+  max-width: 5rem;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
