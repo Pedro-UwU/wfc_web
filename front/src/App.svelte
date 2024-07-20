@@ -28,6 +28,10 @@ import Header from "./components/header.svelte";
     max-height: calc(100vh - 2 * var(--margin-l));
     min-height: calc(100vh - 2 * var(--margin-l));
   }
+
+  h1 {
+    margin-bottom: 0px;
+  }
   .tiles {
     margin-top: var(--margin-l);
     flex: 1 1 auto;

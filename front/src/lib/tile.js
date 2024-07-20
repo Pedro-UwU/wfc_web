@@ -3,6 +3,7 @@ export class Tile {
     this.tile_id = tile_id;
     this.active = false;
     this.can_rotate = false;
+    this.sections = 1;
     this.weight = 1;
     this.north = [];
     this.east = [];
@@ -16,6 +17,10 @@ export class Tile {
 
   set_can_rotate(can_rotate) {
     this.can_rotate = can_rotate;
+  }
+
+  set_sections(sections) {
+    this.sections = sections;
   }
 
   add_category(direction, category) {

@@ -2,7 +2,7 @@
   import Button from "../ui/button.svelte";
   import { get_divisors, get_image_width_and_height } from "../lib/utils.js";
   import { image, image_name, image_width, image_height } from "../stores/image_store.js";
-  import { tile_width, tile_height } from "../stores/tiles_store";
+  import { tile_width, tile_height, tile_sections } from "../stores/tiles_store";
 
   export let show_modal; // It is false
   let dialog;
@@ -16,6 +16,7 @@
 
   let tile_w = 0;
   let tile_h = 0;
+  let tile_secs = 0;
 
   let possible_img_w = [];
   let possible_img_h = [];
@@ -64,6 +65,7 @@
 
     tile_width.set(tile_w);
     tile_height.set(tile_h);
+    tile_sections.set(tile_secs);
     image_name.set(img_title);
     image_width.set(img_w);
     image_height.set(img_h);
@@ -112,13 +114,23 @@
         >Enter a valid Tile Height</small
       >
       <div class="option {image_loaded ? '' : 'disabled'}">
-        <label for="tile-width"> Tiles Height: </label>
+        <label for="tile-height"> Tiles Height: </label>
         <select bind:value={tile_h} disabled={!image_loaded}>
           {#each possible_img_h as x}
             <option value={x}>{x}px</option>
           {/each}
         </select>
       </div>
+      <div class="option {image_loaded ? '' : 'disabled'}">
+        <label for="tile-sections"> Sections per edge: </label>
+        <select bind:value={tile_secs} disabled={!image_loaded}>
+            <option value={1}>1</option>
+            <option value={2}>2</option>
+            <option value={3}>3</option>
+            <option value={4}>4</option>
+        </select>
+      </div>
+
     </div>
 
     <div class="buttons">
@@ -221,6 +233,7 @@
     color: var(--text);
     border-radius: var(--border-radius-l);
     border: none;
+    width: var(--text-giant);
     padding-inline-start: var(--margin-s);
   }
 
