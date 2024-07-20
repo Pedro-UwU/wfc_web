@@ -12,22 +12,22 @@
   onMount(() => {
     let unsuscribe_tile_params = tiles_params.subscribe((new_val) => {
       
-      // for (let i = 0; i < $tiles_params.length; i++) {
-      //   if (!tile_items.children) {
-      //     return;
-      //   }
-      //   if (!tile_items.children[i]) {
-      //     return;
-      //   }
-      //   // Here I need to acces the i child of tile_items and do something
-      //   let child = tile_items.children[i];
+      for (let i = 0; i < $tiles_params.length; i++) {
+        if (!tile_items.children) {
+          return;
+        }
+        if (!tile_items.children[i]) {
+          return;
+        }
+        // Here I need to acces the i child of tile_items and do something
+        let child = tile_items.children[i];
 
-      //   if (new_val[i].active) {
-      //     child.classList.add('active');
-      //   } else {
-      //     child.classList.remove('active');
-      //   }
-      // }
+        if (new_val[i].active) {
+          child.classList.add('active');
+        } else {
+          child.classList.remove('active');
+        }
+      }
     });
 
     return () => {
@@ -66,7 +66,7 @@
     {#each $tiles_params as param}
       <!--svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions-->
       <div
-        class="tile-option"
+        class="tile-option {false ? 'active' : ''}"
         data-index={param.tile_id}
         on:click={() => handle_click(param.tile_id)}
       >
@@ -123,6 +123,7 @@
 
   .active {
     background: var(--accent);
+    scale: 1.05;
   }
 
   img {
