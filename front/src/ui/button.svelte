@@ -7,7 +7,7 @@
   export let disabled = false;
 </script>
 
-<button on:click={onClick} class="{size} {width} {type}" {disabled}>
+<button on:click={onClick} class="{size} {width} {type} {disabled ? 'disabled' : 'enabled'}" {disabled}>
   {text}
 </button>
 
@@ -23,10 +23,6 @@
     filter: brightness(100%);
     transition: background 0.1s ease-in-out;
     transition: filter 0.1s ease-in-out;
-  }
-
-  button:hover {
-    cursor: pointer 
   }
 
   button:hover {
@@ -67,6 +63,16 @@
 
   .thin {
     width: calc(3 * var(--button-medium));
+  }
+
+  .disabled {
+    background: var(--text-dim-50);
+    color: var(--text-dim);
+    cursor: not-allowed;
+  }
+
+  .enabled {
+    cursor: pointer;
   }
 
 

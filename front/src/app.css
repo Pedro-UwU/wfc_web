@@ -2,7 +2,8 @@
   --background: #070609;
   --background-dim: #110E15;
   --text: #ECEAF0;
-  --text-dim: #9388AA;
+  --text-dim: #888198;
+  --text-dim-50: rgba(136, 129,152, 0.5);
   --primary: #AEA1C6;
   --primary-shade: #B1AABD;
   --secondary: #503F70;
@@ -14,6 +15,7 @@
   --margin-xl: 2rem;
   --margin-l: 1rem;
   --margin-m: 0.5rem;
+  --margin-s: 0.25rem;
 
   --button-big: 2rem;
   --button-medium: 1.5rem;
@@ -28,6 +30,8 @@
   --border-radius-l: 16px;
   --border-radius-m: 8px;
   --border-radius-s: 4px;
+
+  --modal-width: 32em;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
