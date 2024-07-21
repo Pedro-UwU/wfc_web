@@ -1,6 +1,7 @@
 <script>
   import { onMount } from "svelte";
   import { tiles, tiles_params, selected_tile } from "../stores/tiles_store";
+    import CategorySelector from "./category_selector.svelte";
 
   let rotate;
   let active;
@@ -35,7 +36,7 @@
   });
 
   const handle_rotate_check = (e) => {
-    if (e.target.checked) {
+    if (e.target.checked !== undefined) {
       $tiles_params[$selected_tile].can_rotate = e.target.checked;
     }
     tiles_params.set($tiles_params);
@@ -100,6 +101,10 @@
         />
       </div>
     </div>
+    <div class="separator" />
+    <div class="selector-wrapper">
+      <CategorySelector title="North"/>
+    </div>
   </div>
 {/if}
 
@@ -161,6 +166,10 @@
   .preview img {
     width: 100%;
     height: 100%;
+  }
+
+  .selector-wrapper {
+    margin-inline: var(--margin-l);
   }
 
   .missing-card {

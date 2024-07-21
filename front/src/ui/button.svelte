@@ -1,6 +1,6 @@
 <script>
   export let size = "medium"; // big - medium - small
-  export let type = "accent"; // accent - primary - secondary
+  export let type = "accent"; // accent - primary - secondary - outlined
   export let width = "wide"; // limitless - wide - thin - content
   export let onClick = () => {}; 
   export let text = "BUTTON";
@@ -51,6 +51,17 @@
 
   .secondary {
     background: var(--secondary);
+  }
+
+  .outlined {
+    background: transparent;
+    border: solid 1px var(--primary);
+    color: var(--text);
+    transition: background 0.1s ease-in-out;
+  }
+  
+  .outlined:hover {
+    background: rgba(255, 255, 255, 0.1);
   }
 
   .limitless {

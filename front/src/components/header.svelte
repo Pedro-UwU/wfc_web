@@ -7,10 +7,8 @@
     image_height,
     image_name,
   } from "../stores/image_store.js";
-  import {
-    tile_width,
-    tile_height
-  } from "../stores/tiles_store.js";
+  import { tile_width, tile_height } from "../stores/tiles_store.js";
+    import CategoriesModal from "./categories_modal.svelte";
 
   let tileset_width;
   let tileset_height;
@@ -29,17 +27,23 @@
     tiles_height_px = "-";
   }
 
-  let show_modal = false;
+  let show_modal_tileset = false;
+  let show_modal_categories = false;
 
-  const show_modal_on = () => {
-    show_modal = true;
+  const show_modal_tileset_on = () => {
+    show_modal_tileset = true;
   };
+
+  const show_modal_categories_on = () => {
+    show_modal_categories  = true;
+  }
 </script>
 
-<UploadModal bind:show_modal />
+<UploadModal bind:show_modal={show_modal_tileset} />
+<CategoriesModal bind:show_modal={show_modal_categories} />
 <div class="header">
   <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions (because of reasons) -->
-  <div class="img-uploader" on:click={() => show_modal_on()}>
+  <div class="img-uploader" on:click={() => show_modal_tileset_on()}>
     {#if !$image}
       <!-- plus symbol -->
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
@@ -70,6 +74,12 @@
   </div>
   <div class="btn-col">
     <div class="btn-container">
+      <Button
+        text="CATEGORIES"
+        type="outlined"
+        size="big"
+        onClick={show_modal_categories_on}
+      />
       <Button
         text="GENERATE"
         type="accent"

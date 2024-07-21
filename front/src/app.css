@@ -38,6 +38,10 @@
   image-rendering: pixelated;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+  moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+
 
 }
 
@@ -69,6 +73,7 @@ h2 {
 p {
   margin-inline: var(--margin-m);
   font-size: var(--text-medium);
+  margin-block: var(--margin-s);
 }
 
 input[type="checkbox"] {
@@ -107,7 +112,7 @@ input[type="checkbox"]:checked {
   background: var(--primary);
 }
 
-input[type="number"] {
+input[type="text"], input[type="number"] {
   appearance: none;
   -webkit-appearance: none;
   border: none;
@@ -121,3 +126,27 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
+::-webkit-scrollbar {
+    width: var(--text-small);
+  }
+
+  ::-webkit-scrollbar-track {
+    border-radius: var(--border-radius-l);
+    background: var(--primary-shade);
+    border: none;
+  }
+
+  ::-webkit-scrollbar-button {
+    display: none;
+  }
+
+  ::-webkit-scrollbar-corner {
+    display: none;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: var(--border-radius-l);
+    background: var(--secondary);
+  }
+

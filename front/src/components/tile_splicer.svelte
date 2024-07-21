@@ -4,7 +4,7 @@
     image_width,
     image_height,
   } from "../stores/image_store";
-  import { tiles, tile_height, tile_width, tiles_params } from "../stores/tiles_store";
+  import { tiles, tile_height, tile_width, tiles_params, tile_sections } from "../stores/tiles_store";
   import { get_tile_array } from "../lib/utils.js";
   import { onMount } from "svelte";
   import { Tile } from "../lib/tile.js";
@@ -23,7 +23,11 @@
           $tile_height,
         );
         tiles.set(temp)
-        let params = temp.map((_,  index) => new Tile(index))
+        let params = temp.map((_,  index) => {
+          const t = new Tile(index)
+          t.set_sections($tile_sections)
+          return t;
+        })
         tiles_params.set(params);
       };
     });

@@ -3,6 +3,7 @@
   import { get_divisors, get_image_width_and_height } from "../lib/utils.js";
   import { image, image_name, image_width, image_height } from "../stores/image_store.js";
   import { tile_width, tile_height, tile_sections } from "../stores/tiles_store";
+  import { categories } from "../stores/categories_store";
 
   export let show_modal; // It is false
   let dialog;
@@ -69,6 +70,7 @@
     image_name.set(img_title);
     image_width.set(img_w);
     image_height.set(img_h);
+    categories.set([]);
     image.set(img_elem); // Is importatnt to call it last
     dialog.close();
   };
