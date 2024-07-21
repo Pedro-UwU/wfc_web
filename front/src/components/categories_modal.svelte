@@ -1,5 +1,5 @@
 <script>
-  import { categories } from "../stores/categories_store.js";
+  import { categories, deleted_categories } from "../stores/categories_store.js";
   import Button from "../ui/button.svelte";
 
   export let show_modal; // It is false
@@ -27,6 +27,8 @@
     if (index > -1) {
       cats.splice(index, 1);
       categories.set(cats);
+      $deleted_categories.push(name);
+      deleted_categories.set($deleted_categories);
     }
 
   }

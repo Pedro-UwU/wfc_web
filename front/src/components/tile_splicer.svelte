@@ -24,7 +24,7 @@
         );
         tiles.set(temp)
         let params = temp.map((_,  index) => {
-          const t = new Tile(index)
+          const t = new Tile(index, $tile_sections)
           t.set_sections($tile_sections)
           return t;
         })

@@ -132,26 +132,4 @@
     border-radius: var(--border-radius-m);
   }
 
-  ::-webkit-scrollbar {
-    width: var(--text-small);
-  }
-
-  ::-webkit-scrollbar-track {
-    border-radius: var(--border-radius-l);
-    background: var(--primary-shade);
-    border: none;
-  }
-
-  ::-webkit-scrollbar-button {
-    display: none;
-  }
-
-  ::-webkit-scrollbar-corner {
-    display: none;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    border-radius: var(--border-radius-l);
-    background: var(--secondary);
-  }
 </style>

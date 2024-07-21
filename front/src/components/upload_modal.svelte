@@ -3,7 +3,7 @@
   import { get_divisors, get_image_width_and_height } from "../lib/utils.js";
   import { image, image_name, image_width, image_height } from "../stores/image_store.js";
   import { tile_width, tile_height, tile_sections } from "../stores/tiles_store";
-  import { categories } from "../stores/categories_store";
+  import { categories, max_categories } from "../stores/categories_store";
 
   export let show_modal; // It is false
   let dialog;
@@ -231,12 +231,7 @@
   }
 
   .options select {
-    background: var(--accent);
-    color: var(--text);
-    border-radius: var(--border-radius-l);
-    border: none;
     width: var(--text-giant);
-    padding-inline-start: var(--margin-s);
   }
 
   .disabled select {

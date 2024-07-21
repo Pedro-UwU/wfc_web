@@ -1,11 +1,13 @@
 <script>
   import { onMount } from "svelte";
   import { tiles, tiles_params, selected_tile } from "../stores/tiles_store";
-    import CategorySelector from "./category_selector.svelte";
+  import CategorySelector from "./category_selector.svelte";
 
   let rotate;
   let active;
   let weight;
+
+  $: selected = $tiles_params[$selected_tile];
 
   $: if ($selected_tile !== -1) {
     const tile = $tiles_params[$selected_tile];
@@ -103,7 +105,13 @@
     </div>
     <div class="separator" />
     <div class="selector-wrapper">
-      <CategorySelector title="North"/>
+      <CategorySelector title="North" tile={selected}/>
+      <div class="separator" />
+      <CategorySelector title="East" tile={selected}/>
+      <div class="separator" />
+      <CategorySelector title="South" tile={selected}/>
+      <div class="separator" />
+      <CategorySelector title="West" tile={selected}/>
     </div>
   </div>
 {/if}
@@ -114,6 +122,7 @@
     width: 100%;
     height: 100%;
     border-radius: var(--border-radius-m);
+    overflow-y: auto;
   }
 
   .tile-title {

@@ -150,3 +150,11 @@ input::-webkit-inner-spin-button {
     background: var(--secondary);
   }
 
+  select {
+    background: var(--accent);
+    color: var(--text);
+    border-radius: var(--border-radius-l);
+    border: none;
+    padding-inline-start: var(--margin-s);
+  }
+
