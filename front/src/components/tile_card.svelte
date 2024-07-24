@@ -1,6 +1,12 @@
 <script>
   import { onMount } from "svelte";
-  import { tiles, tiles_params, selected_tile } from "../stores/tiles_store";
+  import {
+    tiles,
+    tiles_params,
+    selected_tile,
+    tile_sections,
+  } from "../stores/tiles_store";
+  import { categories } from "../stores/categories_store.js";
   import CategorySelector from "./category_selector.svelte";
 
   let rotate;
@@ -96,22 +102,58 @@
           />
         </div>
       </div>
-      <div class="preview">
-        <img
-          src={$tiles[$tiles_params[$selected_tile].tile_id]}
-          alt="Tile preview"
-        />
-      </div>
     </div>
+
     <div class="separator" />
-    <div class="selector-wrapper">
-      <CategorySelector title="North" tile={selected}/>
-      <div class="separator" />
-      <CategorySelector title="East" tile={selected}/>
-      <div class="separator" />
-      <CategorySelector title="South" tile={selected}/>
-      <div class="separator" />
-      <CategorySelector title="West" tile={selected}/>
+    <div class="cat-map">
+      <div class="cat-select-row">
+        {#each { length: $tile_sections } as _, i}
+          <select on:change={(e) => {}} class="cat-select">
+            <option value="" selected>--</option>
+            {#each $categories as cat}
+              <option value={cat}>{cat}</option>
+            {/each}
+          </select>
+        {/each}
+      </div>
+      <div class="rows">
+        <div class="cat-select-column">
+          {#each { length: $tile_sections } as _, i}
+            <select on:change={(e) => {}} class="cat-select deg-90">
+              <option value="" selected>--</option>
+              {#each $categories as cat}
+                <option value={cat}>{cat}</option>
+              {/each}
+            </select>
+          {/each}
+        </div>
+        <div class="preview">
+          <img
+            src={$tiles[$tiles_params[$selected_tile].tile_id]}
+            alt="Tile preview"
+          />
+        </div>
+        <div class="cat-select-column">
+          {#each { length: $tile_sections } as _, i}
+            <select on:change={(e) => {}} class="cat-select deg90">
+              <option value="" selected>--</option>
+              {#each $categories as cat}
+                <option value={cat}>{cat}</option>
+              {/each}
+            </select>
+          {/each}
+        </div>
+      </div>
+      <div class="cat-select-row">
+        {#each { length: $tile_sections } as _, i}
+          <select on:change={(e) => {}} class="cat-select">
+            <option value="" selected>--</option>
+            {#each $categories as cat}
+              <option value={cat}>{cat}</option>
+            {/each}
+          </select>
+        {/each}
+      </div>
     </div>
   </div>
 {/if}
@@ -172,11 +214,6 @@
     margin-inline: var(--margin-l);
   }
 
-  .preview img {
-    width: 100%;
-    height: 100%;
-  }
-
   .selector-wrapper {
     margin-inline: var(--margin-l);
   }
@@ -190,5 +227,58 @@
     justify-content: center;
     align-items: center;
     color: var(--text-dim-50);
+  }
+  .cat-map {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+  }
+
+  .cat-select-row {
+    display: flex;
+    justify-content: space-evenly;
+    margin-block: var(--margin-m);
+    width: calc(6 * var(--text-big));
+  }
+
+  .cat-select-column {
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+    justify-content: space-evenly;
+  }
+
+  .deg90 {
+    transform: rotate(90deg);
+  }
+
+  .deg-90 {
+    transform: rotate(-90deg);
+  }
+
+  .rows {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: calc(6 * var(--text-big));
+  }
+
+  .preview {
+    box-sizing: border-box;
+    width: 100%;
+    padding: calc(100% - 2 * (margin-xl));
+  }
+    
+  .preview img {
+    width: 100%;
+    height: 100%;
+  }
+
+  .cat-select-column .cat-select {
+    margin-block: var(--margin-m);
+  }
+
+  .cat-select {
+    width: calc(3 * var(--text-medium));
   }
 </style>

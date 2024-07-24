@@ -94,7 +94,7 @@
 <style>
   .header {
     background: var(--background-dim);
-    height: calc(4 * var(--text-giant));
+    height: calc(3 * var(--text-giant));
     display: flex;
     align-items: center;
     border-radius: var(--border-radius-m);
@@ -103,8 +103,8 @@
 
   .img-uploader {
     background: var(--secondary-shade);
-    height: calc(4 * var(--text-giant) - 2 * (var(--margin-l)));
-    width: calc(4 * var(--text-giant) - 2 * (var(--margin-l)));
+    height: calc(3 * var(--text-giant) - 2 * (var(--margin-l)));
+    width: calc(3 * var(--text-giant) - 2 * (var(--margin-l)));
     display: flex;
     justify-content: center;
     align-items: center;
