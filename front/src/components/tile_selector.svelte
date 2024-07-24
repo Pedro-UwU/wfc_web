@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import { tiles, tiles_params, selected_tile } from "../stores/tiles_store";
   import Button from "../ui/button.svelte";
+  import { tiles_to_json } from "../lib/utils.js";
 
   let tile_items;
 
@@ -11,7 +12,6 @@
 
   onMount(() => {
     let unsuscribe_tile_params = tiles_params.subscribe((new_val) => {
-      
       for (let i = 0; i < $tiles_params.length; i++) {
         if (!tile_items.children) {
           return;
@@ -23,9 +23,9 @@
         let child = tile_items.children[i];
 
         if (new_val[i].active) {
-          child.classList.add('active');
+          child.classList.add("active");
         } else {
-          child.classList.remove('active');
+          child.classList.remove("active");
         }
       }
     });
@@ -40,7 +40,20 @@
   };
 
   const handle_export = () => {
-    console.log("export");
+    const tile_array = tiles_to_json($tiles_params);
+    const blob = new Blob([tile_array], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    console.log(a);
+    a.href = url;
+    a.download = "tiles.json";
+    document.body.appendChild(a);
+    a.click();
+
+    // Clean up
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 </script>
 
@@ -131,5 +144,4 @@
     height: 80%;
     border-radius: var(--border-radius-m);
   }
-
 </style>

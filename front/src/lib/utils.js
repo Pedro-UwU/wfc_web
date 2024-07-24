@@ -1,3 +1,5 @@
+import { Tile } from "./tile.js";
+
 const get_divisors = (n) => {
   let divisors = [];
   for (let i = 1; i <= n; i++) {
@@ -58,9 +60,14 @@ const get_tile_array = (img, img_w, img_h, tiles_w, tiles_h) => {
   return [...new Set(tiles)];
 };
 
+function tiles_to_json(tiles) {
+  return JSON.stringify(tiles);
+}
+
 
 export {
   get_divisors,
   get_image_width_and_height,
-  get_tile_array
+  get_tile_array,
+  tiles_to_json
 }
