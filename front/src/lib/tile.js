@@ -48,13 +48,28 @@ export class Tile {
       this.north[section] = null;
     }
     if (direction === 'east') {
-      this.north[section] = null;
+      this.east[section] = null;
     }
     if (direction === 'south') {
-      this.north[section] = null;
+      this.south[section] = null;
     }
     if (direction === 'west') {
-      this.north[section] = null;
+      this.west[section] = null;
+    }
+  }
+
+  get_category(direction, section) {
+    if (direction === 'north') {
+      return this.north[section]
+    }
+    if (direction === 'east') {
+      return this.east[section]
+    }
+    if (direction === 'south') {
+      return this.south[section]
+    }
+    if (direction === 'west') {
+      return this.west[section]
     }
   }
 }

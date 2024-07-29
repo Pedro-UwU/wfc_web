@@ -7,13 +7,15 @@
     tile_sections,
   } from "../stores/tiles_store";
   import { categories } from "../stores/categories_store.js";
-  import CategorySelector from "./category_selector.svelte";
 
   let rotate;
   let active;
   let weight;
 
-  $: selected = $tiles_params[$selected_tile];
+  let north_selects;
+  let east_selects;
+  let south_selects;
+  let west_selects;
 
   $: if ($selected_tile !== -1) {
     const tile = $tiles_params[$selected_tile];
@@ -21,6 +23,18 @@
       rotate.checked = tile.can_rotate;
       active.checked = tile.active;
       weight.value = tile.weight;
+    }
+    if (north_selects && east_selects && south_selects && west_selects) {
+      for (let i = 0; i < $tile_sections; i++) {
+        let north_cat = tile.get_category("north", i);
+        let east_cat = tile.get_category("east", i);
+        let south_cat = tile.get_category("south", i);
+        let west_cat = tile.get_category("west", i);
+        north_selects.children[i].value = north_cat != null ? north_cat : "--";
+        east_selects.children[i].value = east_cat != null ? east_cat : "--";
+        south_selects.children[i].value = south_cat != null ? south_cat : "--";
+        west_selects.children[i].value = west_cat != null ? west_cat : "--";
+      }
     }
   }
 
@@ -36,12 +50,40 @@
         active.checked = tile.active;
         weight.value = tile.weight;
       }
+
+      if (north_selects && east_selects && south_selects && west_selects) {
+        for (let i = 0; i < $tile_sections; i++) {
+          let north_cat = tile.get_category("north", i);
+          let east_cat = tile.get_category("east", i);
+          let south_cat = tile.get_category("south", i);
+          let west_cat = tile.get_category("west", i);
+          north_selects.children[i].value = north_cat ? north_cat : "--";
+          east_selects.children[i].value = east_cat ? east_cat : "--";
+          south_selects.children[i].value = south_cat ? south_cat : "--";
+          west_selects.children[i].value = west_cat ? west_cat : "--";
+        }
+      }
     });
 
     return () => {
       unsuscribe_selected();
     };
   });
+
+  const update_tile_cat = (direction, value, section) => {
+    if ($selected_tile == -1) {
+      console.error("Unselected tile");
+      return;
+    }
+    const tile = $tiles_params[$selected_tile];
+    if (value === "--" || value === "") {
+      tile.remove_category(direction, section);
+      return;
+    }
+
+    tile.add_category(direction, section, value);
+    console.log(tile); // TO_DELETE
+  };
 
   const handle_rotate_check = (e) => {
     if (e.target.checked !== undefined) {
@@ -106,10 +148,15 @@
 
     <div class="separator" />
     <div class="cat-map">
-      <div class="cat-select-row">
+      <div bind:this={north_selects} class="cat-select-row">
         {#each { length: $tile_sections } as _, i}
-          <select on:change={(e) => {}} class="cat-select">
-            <option value="" selected>--</option>
+          <select
+            on:change={(e) => {
+              update_tile_cat("north", e.target.value, i);
+            }}
+            class="cat-select"
+          >
+            <option value="--" selected>--</option>
             {#each $categories as cat}
               <option value={cat}>{cat}</option>
             {/each}
@@ -117,10 +164,15 @@
         {/each}
       </div>
       <div class="rows">
-        <div class="cat-select-column">
+        <div bind:this={west_selects} class="cat-select-column">
           {#each { length: $tile_sections } as _, i}
-            <select on:change={(e) => {}} class="cat-select deg-90">
-              <option value="" selected>--</option>
+            <select
+              on:change={(e) => {
+                update_tile_cat("west", e.target.value, i);
+              }}
+              class="cat-select deg-90"
+            >
+              <option value="--" selected>--</option>
               {#each $categories as cat}
                 <option value={cat}>{cat}</option>
               {/each}
@@ -133,10 +185,15 @@
             alt="Tile preview"
           />
         </div>
-        <div class="cat-select-column">
+        <div bind:this={east_selects} class="cat-select-column">
           {#each { length: $tile_sections } as _, i}
-            <select on:change={(e) => {}} class="cat-select deg90">
-              <option value="" selected>--</option>
+            <select
+              on:change={(e) => {
+                update_tile_cat("east", e.target.value, i);
+              }}
+              class="cat-select deg90"
+            >
+              <option value="--" selected>--</option>
               {#each $categories as cat}
                 <option value={cat}>{cat}</option>
               {/each}
@@ -144,10 +201,15 @@
           {/each}
         </div>
       </div>
-      <div class="cat-select-row">
+      <div bind:this={south_selects} class="cat-select-row">
         {#each { length: $tile_sections } as _, i}
-          <select on:change={(e) => {}} class="cat-select">
-            <option value="" selected>--</option>
+          <select
+            on:change={(e) => {
+              update_tile_cat("south", e.target.value, i);
+            }}
+            class="cat-select"
+          >
+            <option value="--" selected>--</option>
             {#each $categories as cat}
               <option value={cat}>{cat}</option>
             {/each}
@@ -268,7 +330,7 @@
     width: 100%;
     padding: calc(100% - 2 * (margin-xl));
   }
-    
+
   .preview img {
     width: 100%;
     height: 100%;
