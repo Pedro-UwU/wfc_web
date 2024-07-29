@@ -72,5 +72,23 @@ export class Tile {
       return this.west[section]
     }
   }
+
+  has_null_category() {
+    return this.north.includes(null)
+      || this.east.includes(null)
+      || this.south.includes(null)
+      || this.west.includes(null)
+  }
+  clone() {
+    const newTile = new Tile(this.tile_id, this.sections);
+    newTile.active = this.active;
+    newTile.can_rotate = this.can_rotate;
+    newTile.weight = this.weight;
+    newTile.north = [...this.north];
+    newTile.east = [...this.east];
+    newTile.south = [...this.south];
+    newTile.west = [...this.west];
+    return newTile;
+  }
 }
 

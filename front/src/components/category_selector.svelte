@@ -9,9 +9,10 @@
   
   const update_tile_cat = (value, section) => {
     if (!tile) {
+      console.error("Unselected tag");
       return;
     }
-    if (value === "-") {
+    if (value === "--") {
       tile.remove_category(title.toLowerCase(), section);
       return;
     }

@@ -9,6 +9,7 @@
   } from "../stores/image_store.js";
   import { tile_width, tile_height } from "../stores/tiles_store.js";
     import CategoriesModal from "./categories_modal.svelte";
+    import GenerateModal from "./generate_modal.svelte";
 
   let tileset_width;
   let tileset_height;
@@ -29,6 +30,7 @@
 
   let show_modal_tileset = false;
   let show_modal_categories = false;
+  let show_modal_generate = false;
 
   const show_modal_tileset_on = () => {
     show_modal_tileset = true;
@@ -37,10 +39,15 @@
   const show_modal_categories_on = () => {
     show_modal_categories  = true;
   }
+
+  const show_modal_generate_on = () => {
+    show_modal_generate = true;
+  }
 </script>
 
 <UploadModal bind:show_modal={show_modal_tileset} />
 <CategoriesModal bind:show_modal={show_modal_categories} />
+<GenerateModal bind:show_modal={show_modal_generate} />
 <div class="header">
   <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions (because of reasons) -->
   <div class="img-uploader" on:click={() => show_modal_tileset_on()}>
@@ -83,7 +90,7 @@
       <Button
         text="GENERATE"
         type="accent"
-        onClick={() => console.log("Hola")}
+        onClick={show_modal_generate_on}
         width="wide"
         size="big"
       />
