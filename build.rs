@@ -12,7 +12,7 @@ fn main() {
     // Run npm install in the frontend directory
     let status = std::process::Command::new("npm")
         .arg("install")
-        .current_dir("frontend")
+        .current_dir("front")
         .status()
         .expect("npm install failed");
 
@@ -24,7 +24,7 @@ fn main() {
     let status = std::process::Command::new("npm")
         .arg("run")
         .arg("build")
-        .current_dir("frontend")
+        .current_dir("front")
         .status()
         .expect("npm run build failed");
 
@@ -32,10 +32,10 @@ fn main() {
         panic!("npm run build failed");            
     }
 
-    // Copy contents from frontend/dist to /static directory
+    // Copy contents from front/dist to /static directory
     let status = std::process::Command::new("cp")
         .arg("-r")
-        .arg("frontend/dist/.")
+        .arg("front/dist/.")
         .arg("static/")
         .status()
         .expect("copy failed");
@@ -44,7 +44,7 @@ fn main() {
         panic!("copy failed");
     }
 
-    println!("cargo:rerun-if-changed=frontend");
+    println!("cargo:rerun-if-changed=front");
 
 
 }
