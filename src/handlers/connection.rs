@@ -4,17 +4,10 @@ use tracing::{error, info};
 
 use crate::{handlers::events::{handle_build, BuildMessage}, utils::heavy_computation};
 
+
+
 pub async fn on_connect(socket: SocketRef) {
     info!("Socket connected: {}", socket.id);
-    // Define the events:
-    // - "Build" Client -> Server
-    // - "Building" Server -> Client
-    // - "Step" Server -> Client
-    // - "Finished" Server -> Client
-    // - "Error" Server -> Client
-   
-    
-    // Little greeting to test with frontend
     socket.on("greet", |socket: SocketRef, Data::<String>(data)| async move {
         if data == "Hi" {
             info!("Greeting socket {}", socket.id);
