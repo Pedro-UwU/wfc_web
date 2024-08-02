@@ -1,16 +1,16 @@
-use std::{
-    collections::VecDeque,
-    sync::{Arc, Mutex, RwLock},
-};
-use tokio::{sync::Semaphore, task::JoinHandle};
+use std::{collections::VecDeque, sync::Arc, time::Duration, usize};
 
-type BoxedTask = Box<dyn FnOnce() + Send + 'static>;
+use tokio::sync::{Mutex, RwLock, Semaphore};
 
+// Type for tasks
+type BoxedTask = Box<dyn FnOnce() + Send>;
+
+#[derive(Clone)]
 pub struct TaskQueue {
     queue: Arc<Mutex<VecDeque<BoxedTask>>>,
-    semaphore: Arc<Semaphore>,
-    running: Arc<RwLock<bool>>,
-    handlers: Arc<Mutex<Vec<JoinHandle<()>>>>,
+    semaphore: Arc<Semaphore>,  // Semaphore for waiting to spawn new tasks
+    running: Arc<RwLock<bool>>, // Boolean to check if the TaskQueue is running
+    handles: Arc<Mutex<Vec<tokio::task::JoinHandle<()>>>>, // JoinHandles of the spawned async tasks
 }
 
 impl TaskQueue {
@@ -19,79 +19,86 @@ impl TaskQueue {
             queue: Arc::new(Mutex::new(VecDeque::new())),
             semaphore: Arc::new(Semaphore::new(max_threads)),
             running: Arc::new(RwLock::new(false)),
-            handlers: Arc::new(Mutex::new(Vec::new())),
+            handles: Arc::new(Mutex::new(Vec::new())),
         }
     }
 
-    pub fn add_task(&mut self, task: BoxedTask) {
-        let mut queue = self.queue.lock().unwrap();
+    pub async fn add_task(&mut self, task: BoxedTask) {
+        let mut queue = self.queue.lock().await;
         queue.push_back(task);
     }
 
-    pub fn start_processing(&mut self) {
+    pub async fn start_processing(&mut self) -> tokio::task::JoinHandle<()> {
+        // Starts running
         {
-            let mut running_value = self.running.write().unwrap();
-            *running_value = true;
+            let mut running = self.running.write().await;
+            *running = true;
         }
         let running = self.running.clone();
         let queue = self.queue.clone();
         let semaphore = self.semaphore.clone();
-        let handlers = self.handlers.clone();
+        let handles = self.handles.clone();
+        // The main executor is an async task that spawns new task in the async runtime. Each task
+        // spawns a new thread blocking task and waits for it, this way, CPU intense tasks would
+        // use other CPU threads
         let _main_executor = tokio::spawn(async move {
-            while *running.read().unwrap() {
+            while *running.read().await {
                 let permit = semaphore.acquire().await.unwrap();
-
                 let maybe_task = {
-                    let mut queue = queue.lock().unwrap();
+                    let mut queue = queue.lock().await;
                     queue.pop_front()
                 };
                 if let Some(task) = maybe_task {
                     let sem_clone = semaphore.clone();
-                    let handle = tokio::spawn(async move {
-                        let permit = sem_clone.acquire().await.unwrap();
-                        (task)();
-                        drop(permit);
+                    let handle = tokio::task::spawn(async move {
+                        // Each task takes a permit
+                        // If the task is aborted, the permit will be droped, so aborting is safe
+                        let task_permit = sem_clone.acquire().await.unwrap();
+                        let future = tokio::task::spawn_blocking(task);
+                        let _ = future.await;
+
+                        drop(task_permit);
                     });
-                    let mut handlers = handlers.lock().unwrap();
-                    handlers.push(handle);
+                    handles.lock().await.push(handle);
                 } else {
                     drop(permit);
-                    let _ = tokio::time::sleep(tokio::time::Duration::from_millis(100));
+                    // Yield the runtime
+                    let _ = tokio::time::sleep(tokio::time::Duration::from_millis(1)).await;
                 }
 
-                // Clean the handlers
                 {
-                    let mut handlers = handlers.lock().unwrap();
-                    handlers.retain(|h| !h.is_finished());
+                    // Clean finished handles
+                    handles.lock().await.retain(|h| !h.is_finished());
                 }
             }
         });
+        return _main_executor;
     }
 
     pub async fn shutdown(&mut self) {
         {
-            let mut running = self.running.write().unwrap();
+            let mut running = self.running.write().await;
             *running = false;
         }
-
-        let handlers = self.handlers.lock().unwrap();
-        for handler in handlers.iter() {
-            handler.abort();
+        let mut handles = vec![];
+        {
+            let mut locked_handles = self.handles.lock().await;
+            // Drain the handles to take ownership of the remaining tasks
+            handles = locked_handles.drain(..).collect();
+        };
+        for handle in handles {
+            let _ = handle.await;
         }
     }
 
-    pub fn is_finished(&self) -> bool {
-        let handlers = self.handlers.lock().unwrap();
-        if handlers.len() > 0 {
-            return false;
-        }
+    pub async fn is_finished(&self) -> bool {
+        let handles = self.handles.lock().await;
 
-        let queue = self.queue.lock().unwrap(); 
-
-        if queue.len() > 0 {
-            return false;
+        if handles.len() == 0 {
+            let queue = self.queue.lock().await;
+            return queue.len() == 0;
         }
-        return true;
+        false
     }
 }
 
