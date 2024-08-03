@@ -42,8 +42,8 @@ const build = (result_width, result_height, tiles) => {
     categories: cats,
     tiles: tiles_copy
   };
-  console.log(dto);
-  // socket.emit("build", JSON.stringify(dto))
+  console.log(socket);
+  socket.emit("build", JSON.stringify(dto))
   return "";
 }
 
@@ -75,4 +75,4 @@ const read_delete = (msg) => {
   }
 }
 
-export { build }
+export { connect_socket, build }

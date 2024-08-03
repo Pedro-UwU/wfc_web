@@ -1,6 +1,6 @@
 <script>
   import Button from "../ui/button.svelte";
-  import { build } from "../lib/socketio.js";
+  import {connect_socket, build } from "../lib/socketio.js";
     import { tiles_params } from "../stores/tiles_store";
   export let show_modal; // It is false
   let dialog;
@@ -20,6 +20,7 @@
 
   const handle_build = () => {
     let tiles = $tiles_params;
+    connect_socket();
     let result = build(result_width, result_height, tiles);
     if (result !== "") {
       error_msg.innerText = result

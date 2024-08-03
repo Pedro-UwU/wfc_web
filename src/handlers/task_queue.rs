@@ -1,4 +1,4 @@
-use std::{collections::VecDeque, sync::Arc, time::Duration, usize};
+use std::{collections::VecDeque, sync::Arc, usize};
 
 use tokio::sync::{Mutex, RwLock, Semaphore};
 
@@ -80,13 +80,13 @@ impl TaskQueue {
             let mut running = self.running.write().await;
             *running = false;
         }
-        let mut handles = vec![];
+        let mut _handles = vec![];
         {
             let mut locked_handles = self.handles.lock().await;
             // Drain the handles to take ownership of the remaining tasks
-            handles = locked_handles.drain(..).collect();
+            _handles = locked_handles.drain(..).collect();
         };
-        for handle in handles {
+        for handle in _handles {
             let _ = handle.await;
         }
     }
@@ -101,4 +101,3 @@ impl TaskQueue {
         false
     }
 }
-

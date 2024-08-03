@@ -101,7 +101,7 @@
 
   const handle_weight_change = (e) => {
     if (e.target.value !== undefined) {
-      $tiles_params[$selected_tile].weight = e.target.value;
+      $tiles_params[$selected_tile].weight = parseFloat(e.target.value);
     }
     tiles_params.set($tiles_params);
   };
